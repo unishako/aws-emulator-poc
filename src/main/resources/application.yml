@@ -1,0 +1,12 @@
+app:
+  s3:
+    bucket: ${S3_BUCKET:poc-bucket}
+    region: ${AWS_REGION:ap-northeast-1}
+    # 空なら実 AWS。エミュレータ利用時は https://127.0.0.1:9297 を指定する。
+    endpoint: ${S3_ENDPOINT:}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

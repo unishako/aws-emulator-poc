@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>S3 POC</title>
+</head>
+<body>
+<h1>S3 POC</h1>
+<p>bucket: <strong th:text="${bucket}">bucket</strong></p>
+
+<h2>Upload (PUT)</h2>
+<form method="post" action="/objects" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Objects (GET)</h2>
+<ul>
+    <li th:each="key : ${keys}">
+        <a th:href="@{/objects/{key}(key=${key})}" th:text="${key}">key</a>
+    </li>
+    <li th:if="${#lists.isEmpty(keys)}">(empty)</li>
+</ul>
+</body>
+</html>

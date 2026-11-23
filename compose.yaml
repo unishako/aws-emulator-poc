@@ -1,0 +1,45 @@
+services:
+  emulator:
+    build:
+      context: docker
+      dockerfile: Dockerfile.emulator
+      args:
+        # Apple silicon / Arm は aarch64、Intel は x86_64
+        RPM_ARCH: ${RPM_ARCH:-aarch64}
+    image: aws-emulator
+    # テレメトリは無効にしている。有効にするには "--telemetry", "off" を削除する(README 参照)。
+    # 追加オプションは command に記述する。
+    command: ["-p", "9297", "--telemetry", "off"]
+    # .emulator/ に生成されるファイルの所有者を、実行ユーザーに合わせる
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    mem_limit: 2g
+    memswap_limit: 2g
+    ports:
+      # 必ず 127.0.0.1 に限定して公開する
+      - "127.0.0.1:9297:9297"
+      # app サービス(network_mode でネットワークを共有しているため、ここで公開する)
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+    volumes:
+      # 認証情報と CA 証明書の共有ディレクトリ
+      - ./.emulator:/home/emulator/.aws/emulator
+    healthcheck:
+      test: ["CMD", "curl", "-sfk", "https://127.0.0.1:9297/__admin/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    image: aws-emulator-poc-app
+    # 証明書が 127.0.0.1 用のため、emulator とネットワークを共有して接続する
+    network_mode: "service:emulator"
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    depends_on:
+      emulator:
+        condition: service_healthy
+    volumes:
+      - ./.emulator:/emu:ro
+    environment:
+      AWS_REGION: ap-northeast-1
+      S3_BUCKET: poc-bucket
+      S3_ENDPOINT: https://127.0.0.1:9297

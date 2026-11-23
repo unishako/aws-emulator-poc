@@ -1,0 +1,7 @@
+# 認証情報を含む .emulator/ や Git の履歴を、ビルドコンテキストに含めない
+.emulator/
+.git/
+build/
+.gradle/
+.idea/
+*.iml

@@ -1,0 +1,17 @@
+# AWS Emulator が生成する認証情報・CA 証明書(コミットしないこと)
+.emulator/
+
+# Gradle / ビルド成果物
+.gradle/
+build/
+
+# 環境変数のファイル (値を書く可能性があるため)
+.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store

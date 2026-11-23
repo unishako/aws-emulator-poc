@@ -1,0 +1,8 @@
+# 改行コードを統一する (Windows で clone しても、コンテナ内で実行するスクリプトが壊れないようにする)
+* text=auto
+*.sh text eol=lf
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# バイナリ
+*.jar binary
